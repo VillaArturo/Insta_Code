@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
-class TranslationSerializer(serializers.Serializer):
+#Filtro de datos de Cliente-Backend
+class TranslationSerializer(serializers.serializer):
     source_code = serializers.CharField()
     language = serializers.CharField(default='vb6')

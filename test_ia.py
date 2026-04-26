@@ -1,14 +1,15 @@
-from google import genai
-from google.genai import types
-import os
+# 1. Importas las piezas
+from api.Servicios.cliente_gemini import ClienteGemini
+from api.ia.orquestador import OrquestadorIA
 
-API_KEY = "AQ.Ab8RN6L5lr1mcLdmpOAFy4ulqrjrEpTpua9cgv90s7SLR1OiDQ"
-client = genai.Client(api_key=API_KEY)
+# 2. Creas el servicio (La conexión a internet)
+servicio_ia = ClienteGemini()
 
+# 3. Creas el orquestador y LE PASAS el servicio (Inyección de dependencia)
+# Así el orquestador tiene el 'self.cliente' listo para usar
+orquestador = OrquestadorIA(servicio_ia)
 
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents="Estoy mandando esta solicitud por API, quiero saber cuales son las limitantes que poseo con relacion a la cuota gratuita de API gemini. Es el modelo gemini-2.5-flash"
-)
+# 4. Ejecutas la acción
+resultado = orquestador.convertir_codigo("Esto es una preuba, dar un 'afirmativo' si recibes este mensaje")
 
-print(response.text)
+print(resultado)
