@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Traductor VB6 a C++</title>
+</head>
+<body>
+
+    <h1>Traductor VB6 a C++</h1>
+
+    <input type="file" id="fileInput" accept=".bas,.frm,.cls">
+    <button onclick="subirArchivo()">Traducir</button>
+
+    <p id="mensaje"></p>
+
+    <textarea 
+        id="resultado" 
+        rows="15" 
+        cols="80"
+        placeholder="Aquí aparecerá el código traducido...">
+    </textarea>
+
+    <script>
+        async function subirArchivo() {
+            const input = document.getElementById("fileInput");
+            const mensaje = document.getElementById("mensaje");
+            const resultado = document.getElementById("resultado");
+
+            const archivo = input.files[0];
+
+            // Validar selección
+            if (!archivo) {
+                mensaje.innerText = "Selecciona un archivo VB6.";
+                return;
+            }
+
+            // Validar extensión
+            const nombre = archivo.name.toLowerCase();
+            const extensionesValidas = [".bas", ".frm", ".cls"];
+
+            const esValido = extensionesValidas.some(ext => 
+                nombre.endsWith(ext)
+            );
+
+            if (!esValido) {
+                mensaje.innerText = "Formato no válido.";
+                return;
+            }
+
+            // Preparar envío
+            const formData = new FormData();
+            formData.append("file", archivo);
+
+            mensaje.innerText = "Procesando archivo...";
+            resultado.value = "";
+
+            try {
+                const response = await fetch("/api/translate/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    mensaje.innerText = "Traducción completada.";
+                    resultado.value = data.output;
+                } else {
+                    mensaje.innerText = "Error al traducir.";
+                }
+
+            } catch (error) {
+                mensaje.innerText = "Error de conexión con el servidor.";
+            }
+        }
+    </script>
+
+</body>
+</html>
