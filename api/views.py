@@ -10,14 +10,14 @@ from rest_framework import status
 from .serializers import TranslationSerializer
 
 from api.ia.orquestador import OrquestadorIA
-from api.ia.cliente_mock import ClienteMock  # 👈 IMPORTANTE
+from api.Servicios.cliente_gemini import ClienteGemini
 
 
 class TranslateCodeView(APIView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        cliente = ClienteMock()  #crear cliente
+        cliente = ClienteGemini()
         self.orquestador = OrquestadorIA(cliente)
 
     def post(self, request):
@@ -69,6 +69,8 @@ class TranslateCodeView(APIView):
         
         #trabajo de IA
         resultado = self.orquestador.convertir_codigo(contexto)
+        print("Resultado prueba")
+        print(resultado)
 
         return Response({
             "status": "success",
