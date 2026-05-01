@@ -1,0 +1,22 @@
+# --- SEGURIDAD ---
+# Ignorar el archivo de llaves (independientemente de cómo se llame)
+.env
+
+# --- PYTHON ---
+# Ignorar carpetas de compilación de Python (evita basura en el repo)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- ENTORNOS VIRTUALES ---
+# Ignorar tu carpeta de librerías local
+venv/
+env/
+.venv/
+
+# --- BASE DE DATOS (Si usas SQLite) ---
+*.sqlite3
+
+# --- EDITORES ---
+.vscode/
+.idea/
