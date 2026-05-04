@@ -1,79 +1,333 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 <head>
-    <meta charset="UTF-8">
-    <title>Traductor VB6 a C++</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>InstaCode - Traductor</title>
 
-    <h1>Traductor VB6 a C++</h1>
-
-    <input type="file" id="fileInput" accept=".bas,.frm,.cls">
-    <button onclick="subirArchivo()">Traducir</button>
-
-    <p id="mensaje"></p>
-
-    <textarea 
-        id="resultado" 
-        rows="15" 
-        cols="80"
-        placeholder="Aquí aparecerá el código traducido...">
-    </textarea>
-
-    <script>
-        async function subirArchivo() {
-            const input = document.getElementById("fileInput");
-            const mensaje = document.getElementById("mensaje");
-            const resultado = document.getElementById("resultado");
-
-            const archivo = input.files[0];
-
-            // Validar selección
-            if (!archivo) {
-                mensaje.innerText = "Selecciona un archivo VB6.";
-                return;
+        <style>
+            body {
+                background-color: #0f0f0f;
+                color: #e5e5e5;
+                font-family: Arial, sans-serif;
+                margin: 0;
             }
 
-            // Validar extensión
-            const nombre = archivo.name.toLowerCase();
-            const extensionesValidas = [".bas", ".frm", ".cls"];
-
-            const esValido = extensionesValidas.some(ext => 
-                nombre.endsWith(ext)
-            );
-
-            if (!esValido) {
-                mensaje.innerText = "Formato no válido.";
-                return;
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
+                background-color: #121212;
+                border-bottom: 1px solid #2a2a2a;
             }
 
-            // Preparar envío
-            const formData = new FormData();
-            formData.append("file", archivo);
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-            mensaje.innerText = "Procesando archivo...";
-            resultado.value = "";
-
-            try {
-                const response = await fetch("/api/translate/", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.status === "success") {
-                    mensaje.innerText = "Traducción completada.";
-                    resultado.value = data.output;
-                } else {
-                    mensaje.innerText = "Error al traducir.";
+                .logo img {
+                    width: 40px;
                 }
 
-            } catch (error) {
-                mensaje.innerText = "Error de conexión con el servidor.";
+            .acciones button {
+                margin-left: 10px;
+                background-color: #2a2a2a;
+                border: none;
+                color: #fff;
+                padding: 8px 15px;
+                border-radius: 6px;
+                cursor: pointer;
             }
-        }
-    </script>
 
-</body>
+            .titulo {
+                text-align: center;
+                padding: 30px;
+            }
+
+            .lenguajes {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .tag {
+                background-color: #1f1f1f;
+                padding: 5px 12px;
+                border-radius: 6px;
+            }
+
+            .file-container {
+                text-align: center;
+                margin: 20px;
+            }
+
+            .file-label {
+                background-color: #2a2a2a;
+                padding: 10px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            input[type="file"] {
+                display: none;
+            }
+
+            #fileName {
+                margin-left: 10px;
+                color: #aaa;
+            }
+
+            /* CONTENEDOR GENERAL (MISMO PARA TODO) */
+            .main {
+                max-width: 1100px;
+                margin: auto;
+            }
+
+            .contenedor {
+                display: flex;
+                gap: 60px;
+                padding: 20px 0;
+            }
+
+            .panel {
+                width: 50%;
+            }
+
+            textarea {
+                width: 100%;
+                height: 360px;
+                background-color: #1a1a1a;
+                color: #dcdcdc;
+                border: 1px solid #333;
+                border-radius: 10px;
+                padding: 15px;
+                font-family: Consolas, monospace;
+            }
+
+            /* BOTONES ALINEADOS */
+            .botones {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+            }
+
+            .grupo-izq {
+                display: flex;
+                gap: 15px;
+            }
+
+            button {
+                background-color: #2a2a2a;
+                color: #fff;
+                border: none;
+                padding: 10px 18px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+                button:disabled {
+                    background-color: #444;
+                    cursor: not-allowed;
+                }
+
+            #timer {
+                text-align: center;
+                color: #aaa;
+            }
+
+            footer {
+                text-align: center;
+                padding: 20px;
+                color: #888;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header>
+            <div class="logo">
+                {% load static %}
+                <img src="{% static 'logo.png' %}">
+                <h2>Insta_Code</h2>
+            </div>
+
+            <!-- ✅ Por esto -->
+            <div class="acciones">
+                {% if user.is_authenticated %}
+                <button onclick="window.location.href='/historial/'">Historial</button>
+                <button onclick="window.location.href='/logout/'">Cerrar sesión</button>
+                {% else %}
+                <button onclick="window.location.href='/login/'">Iniciar sesión</button>
+                {% endif %}
+            </div>
+        </header>
+
+        <div class="titulo">
+            <h1>InstaCode - Traductor de Código</h1>
+
+            {% if user.is_authenticated %}
+            <p>Bienvenido, <strong>{{ user.username }}</strong> 👋</p>
+            {% else %}
+            <p>Si quieres un historial, inicia sesión</p>
+            <button onclick="window.location.href='/login/'">Iniciar sesión</button>
+            {% endif %}
+        </div>
+
+        <div class="lenguajes">
+            <div>
+                <h3>Origen</h3>
+                <div class="tag">VB6</div>
+            </div>
+            <div>
+                <h3>Destino</h3>
+                <div class="tag">C++</div>
+            </div>
+        </div>
+
+        <div class="file-container">
+            <label class="file-label">
+                Elegir archivo
+                <input type="file" id="fileInput" accept=".bas,.frm,.cls,.cb" onchange="archivoSeleccionado()">
+            </label>
+            <span id="fileName">Ningún archivo seleccionado</span>
+        </div>
+
+        <p id="mensaje" style="text-align:center;"></p>
+        <p id="timer">Tiempo: 0s</p>
+
+        <div class="main">
+
+            <div class="contenedor">
+                <div class="panel">
+                    <h3>VB6</h3>
+                    <textarea id="entrada"></textarea>
+                </div>
+
+                <div class="panel">
+                    <h3>C++</h3>
+                    <textarea id="resultado"></textarea>
+                </div>
+            </div>
+
+            <div class="botones">
+                <div class="grupo-izq">
+                    <button id="btnTraducir" onclick="subirArchivo()" disabled>
+                        Traducir código
+                    </button>
+                </div>
+
+                <button onclick="descargar()">
+                    Descargar archivo
+                </button>
+            </div>
+
+        </div>
+
+        <footer>
+            © 2023 InstaCode
+        </footer>
+
+        <script>
+            let intervalo;
+            let segundos = 0;
+
+            function getCsrf() {
+                return document.cookie.match(/csrftoken=([^;]+)/)?.[1] || "";
+            }
+
+            function archivoSeleccionado() {
+                const input = document.getElementById("fileInput");
+                const fileName = document.getElementById("fileName");
+                const btn = document.getElementById("btnTraducir");
+                const entrada = document.getElementById("entrada");
+
+                const archivo = input.files[0];
+
+                if (archivo) {
+                    fileName.textContent = archivo.name;
+                    btn.disabled = false;
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        entrada.value = e.target.result;
+                    };
+                    reader.readAsText(archivo);
+                }
+            }
+
+            async function subirArchivo() {
+                const input = document.getElementById("fileInput");
+                const mensaje = document.getElementById("mensaje");
+                const resultado = document.getElementById("resultado");
+                const timer = document.getElementById("timer");
+
+                const archivo = input.files[0];
+                if (!archivo) return;
+
+                segundos = 0;
+                timer.innerText = "Tiempo: 0s";
+
+                intervalo = setInterval(() => {
+                    segundos++;
+                    timer.innerText = "Tiempo: " + segundos + "s";
+                }, 1000);
+
+                const formData = new FormData();
+                formData.append("file", archivo);
+
+                mensaje.innerText = "Procesando...";
+                resultado.value = "";
+
+                try {
+                    const response = await fetch("/api/translate/", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCsrf()
+                        },
+                        credentials: "include",
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    clearInterval(intervalo);
+
+                    if (data.status === "success") {
+                        mensaje.innerText = "Traducción completada.";
+                        resultado.value = data.output;
+                    } else {
+                        mensaje.innerText = "Error.";
+                    }
+
+                } catch {
+                    clearInterval(intervalo);
+                    mensaje.innerText = "Error de conexión.";
+                }
+            }
+
+            function descargar() {
+                const contenido = document.getElementById("resultado").value;
+
+                if (!contenido) {
+                    alert("No hay nada para descargar.");
+                    return;
+                }
+
+                const blob = new Blob([contenido], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "codigo_traducido.cpp";
+                a.click();
+
+                URL.revokeObjectURL(url);
+            }
+        </script>
+
+    </body>
+    {% csrf_token %}
 </html>
