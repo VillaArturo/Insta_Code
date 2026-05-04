@@ -1,10 +1,10 @@
-# Inta_Code: Legacy Code Assistant (VB6 to C++)
+# Insta_Code: Legacy Code Assistant (VB6 to C++)
 
-Este proyecto es un asistente inteligente diseñado para facilitar la transición de sistemas legados escritos en **Visual Basic 6** hacia **C++ moderno**, utilizando modelos de lenguaje de última generación (Gemini 2.5 Flash).
+Este proyecto es un asistente inteligente diseñado para facilitar la transición de sistemas legados escritos en **Visual Basic 6** hacia **C++ moderno**, utilizando modelos de lenguaje de última generación (Gemini API).
 
-## Preparación del Entorno
+## 🚀 Preparación del Entorno
 
-Sigue estos pasos para replicar el entorno de desarrollo y ejecución:
+Sigue estos pasos para configurar el entorno de desarrollo y asegurar que todos los colaboradores trabajen bajo el mismo estándar:
 
 ### 1. Clonación y Estructura
 Asegúrate de estar en la carpeta raíz del proyecto `Insta_Code`.
@@ -15,15 +15,8 @@ Es obligatorio el uso de un entorno virtual para aislar las dependencias:
 # Creación del entorno
 python -m venv venv
 
-# Activación en PowerShell
+# Activación en Windows (PowerShell)
 .\venv\Scripts\activate
 
-### 3. Instalaccion de requisitos
-
-pip install django djangorestframework django-cors-headers google-genai
-
-## para comprobar su comunicacion
-
-python test_ia.py
-
-
+# Activación en Linux/Mac
+source venv/bin/activate
