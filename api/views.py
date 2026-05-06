@@ -21,12 +21,11 @@ class TranslateCodeView(APIView):
         self.orquestador = OrquestadorIA(cliente)
 
     def post(self, request):
-        
+
         print("FILES:", request.FILES)
         print("DATA:", request.data)
-        
-        file = request.FILES.get('file')
 
+        file = request.FILES.get('file')
 
         if file:
             if not file.name.endswith(('.bas', '.frm', '.cls')):
@@ -38,7 +37,7 @@ class TranslateCodeView(APIView):
             try:
                 codigo_fuente = file.read().decode('utf-8', errors='ignore')
                 lenguaje = "vb6"
-            except:
+            except Exception:
                 return Response(
                     {"error": "Error al leer archivo"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -53,7 +52,7 @@ class TranslateCodeView(APIView):
             codigo_fuente = serializer.validated_data.get("source_code")
             lenguaje = serializer.validated_data.get("language")
 
-        #flijo del parser
+        # Flujo del parser
         codigo_limpio = limpiar_codigo(codigo_fuente)
         estructura = parsear_vb6(codigo_limpio)
         contexto = preparar_contexto(estructura)
@@ -66,9 +65,16 @@ class TranslateCodeView(APIView):
 
         print("=== CONTEXTO ===")
         print(contexto)
-        
-        #trabajo de IA
-        resultado = self.orquestador.convertir_codigo(contexto)
+
+        # Trabajo de IA
+        try:
+            resultado = self.orquestador.convertir_codigo(contexto, lenguaje)
+        except ValueError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
         print("Resultado prueba")
         print(resultado)
 
@@ -78,6 +84,7 @@ class TranslateCodeView(APIView):
             "input": codigo_fuente[:200],
             "output": resultado["codigo_convertido"]
         })
-        
+
+
 def home(request):
     return render(request, 'index.html')
