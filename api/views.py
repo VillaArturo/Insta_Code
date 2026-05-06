@@ -52,7 +52,6 @@ class TranslateCodeView(APIView):
             codigo_fuente = serializer.validated_data.get("source_code")
             lenguaje = serializer.validated_data.get("language")
 
-        # Flujo del parser
         codigo_limpio = limpiar_codigo(codigo_fuente)
         estructura = parsear_vb6(codigo_limpio)
         contexto = preparar_contexto(estructura)
@@ -66,7 +65,6 @@ class TranslateCodeView(APIView):
         print("=== CONTEXTO ===")
         print(contexto)
 
-        # Trabajo de IA
         try:
             resultado = self.orquestador.convertir_codigo(contexto, lenguaje)
         except ValueError as e:

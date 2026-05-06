@@ -19,11 +19,8 @@ class OrquestadorIA:
         # Soluciona: [localhost](http://localhost) → localhost
         respuesta = re.sub(r'\[([^\]\n]+)\]\(http[^\)]+\)', r'\1', respuesta)
 
-        # Soluciona: << "\n (salto real) " → << "\n"
-        # El LLM a veces parte un string con un salto de línea literal adentro
         respuesta = re.sub(r'(?<=")\n(?=")', r'\\n', respuesta)
 
-        # Quitar líneas introductorias típicas del LLM
         lineas = respuesta.split('\n')
         lineas_filtradas = [
             l for l in lineas

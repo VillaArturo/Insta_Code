@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 
 class ClienteGemini:
     def __init__(self):
-        # Carga las variables del archivo .env en el sistema
         load_dotenv()
         
-        # Busca la variable por su nombre
         self.api_key = os.getenv("GEMINI_API_KEY")
         
         if not self.api_key:
