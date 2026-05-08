@@ -20,3 +20,5 @@ env/
 # --- EDITORES ---
 .vscode/
 .idea/
+
+echo .vs/ >> .gitignore

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <title>InstaCode - Login</title>
+
+        <style>
+            body {
+                background-color: #0f0f0f;
+                color: #e5e5e5;
+                font-family: Arial, sans-serif;
+                margin: 0;
+            }
+
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
+                background-color: #121212;
+                border-bottom: 1px solid #2a2a2a;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+                .logo img {
+                    width: 40px;
+                }
+
+            .acciones button {
+                margin-left: 10px;
+                background-color: #2a2a2a;
+                border: none;
+                color: #fff;
+                padding: 8px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: calc(100vh - 140px);
+            }
+
+            .container {
+                background-color: #121212;
+                padding: 30px;
+                border-radius: 12px;
+                width: 380px;
+                box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            }
+
+            h2 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            input {
+                width: 100%;
+                padding: 12px;
+                margin: 10px 0;
+                background-color: #1a1a1a;
+                border: 1px solid #333;
+                border-radius: 8px;
+                color: #fff;
+                box-sizing: border-box;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+                background-color: #2a2a2a;
+                border: none;
+                border-radius: 8px;
+                color: #fff;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+                button:hover {
+                    background-color: #3a3a3a;
+                }
+
+            .switch {
+                margin-top: 15px;
+                text-align: center;
+                color: #aaa;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+                .switch:hover {
+                    color: #fff;
+                }
+
+            .hidden {
+                display: none;
+            }
+
+            .logo-title {
+                text-align: center;
+                margin-bottom: 15px;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .error {
+                color: #ff6b6b;
+                text-align: center;
+                margin: 5px 0;
+                font-size: 14px;
+            }
+
+            footer {
+                text-align: center;
+                padding: 20px;
+                color: #888;
+                border-top: 1px solid #2a2a2a;
+                background-color: #121212;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header>
+            <div class="logo">
+                {% load static %}
+                <img src="{% static 'logo.png' %}">
+                <h2>Insta_Code</h2>
+            </div>
+            <div class="acciones">
+                <button onclick="window.location.href='/'">Inicio</button>
+            </div>
+        </header>
+
+        <div class="center">
+            <div class="container">
+
+                <div class="logo-title">InstaCode</div>
+
+                <!-- LOGIN -->
+                {% if form == 'register' %}
+                <div id="loginForm" class="hidden">
+                    {% else %}
+                    <div id="loginForm">
+                        {% endif %}
+                        <h2>Iniciar Sesión</h2>
+
+                        {% if error %}
+                        <p class="error">{{ error }}</p>
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <input type="text" name="username" placeholder="Usuario" required>
+                            <input type="password" name="password" placeholder="Contraseña" required>
+                            <button type="submit">Entrar</button>
+                        </form>
+
+                        <div class="switch" onclick="toggleForms()">
+                            No tengo cuenta
+                        </div>
+                    </div>
+
+                    <!-- REGISTER -->
+                    {% if form == 'register' %}
+                    <div id="registerForm">
+                        {% else %}
+                        <div id="registerForm" class="hidden">
+                            {% endif %}
+                            <h2>Crear Cuenta</h2>
+
+                            {% if error %}
+                            <p class="error">{{ error }}</p>
+                            {% endif %}
+
+                            <form method="POST" action="{% url 'register' %}">
+                                {% csrf_token %}
+                                <input type="text" name="username" placeholder="Usuario" required>
+                                <input type="email" name="email" placeholder="Correo" required>
+                                <input type="password" name="password" placeholder="Contraseña" required>
+                                <button type="submit">Registrarse</button>
+                            </form>
+
+                            <div class="switch" onclick="toggleForms()">
+                                Ya tengo cuenta
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <footer>
+                    © 2023 InstaCode
+                </footer>
+
+                <script>
+                    function toggleForms() {
+                        document.getElementById("loginForm").classList.toggle("hidden");
+                        document.getElementById("registerForm").classList.toggle("hidden");
+                    }
+                </script>
+
+    </body>
+</html>
